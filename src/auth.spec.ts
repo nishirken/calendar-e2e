@@ -82,20 +82,23 @@ test.describe("Sign in", () => {
 
     await signup(email, password);
 
-    const emailInput = await page
+    const emailInput = page
       .locator(signinFormTestIdSelectors.emailInput)
       .locator("input");
-    const passwordInput = await page
+
+    const passwordInput = page
       .locator(signinFormTestIdSelectors.passwordInput)
       .locator("input");
-
-    await emailInput.fill(email);
-    await passwordInput.fill(password);
+    
+    await emailInput.type(email);
+    await passwordInput.type(password);
     await page.locator(signinFormTestIdSelectors.submitButton).click();
 
+    await page.locator(weekTestIdSelectors.root).waitFor();
+
     await test
-      .expect(page.locator(weekTestIdSelectors.root).waitFor())
-      .resolves.not.toBeNull();
+      .expect(page.locator(weekTestIdSelectors.root).textContent())
+      .resolves.toBe(email);
   });
 
   test("Shows errors if fields are empty", async ({ page }) => {

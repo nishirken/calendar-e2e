@@ -3,7 +3,7 @@ import type { PlaywrightTestConfig } from '@playwright/test';
 const config: PlaywrightTestConfig = {
   use: {
     browserName: 'chromium',
-    viewport: { width: 1280, height: 1024 },
+    viewport: { width: 1680, height: 1280 },
     ignoreHTTPSErrors: true,
     video: 'on-first-retry',
     launchOptions: {
