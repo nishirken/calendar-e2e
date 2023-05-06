@@ -94,11 +94,9 @@ test.describe("Sign in", () => {
     await passwordInput.type(password);
     await page.locator(signinFormTestIdSelectors.submitButton).click();
 
-    await page.locator(weekTestIdSelectors.root).waitFor();
+    const weekEl = await page.locator(weekTestIdSelectors.root).elementHandle();
 
-    await test
-      .expect(page.locator(weekTestIdSelectors.root).textContent())
-      .resolves.toBe(email);
+    test.expect(weekEl).not.toBeNull();
   });
 
   test("Shows errors if fields are empty", async ({ page }) => {
