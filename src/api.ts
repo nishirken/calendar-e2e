@@ -1,5 +1,6 @@
 import axios from "axios";
 import { API_ORIGIN } from "./const";
+import chance from "chance";
 
 const instance = axios.create({
   baseURL: API_ORIGIN,
@@ -7,6 +8,16 @@ const instance = axios.create({
   proxy: false,
 });
 
-export const signup = (email: string, password: string) => {
-  return instance.post("/auth/signup", { email, password });
+export type AuthCreds = {
+  email: string;
+  password: string;
+};
+
+export const signup = async (): Promise<AuthCreds> => {
+  const email = new chance().email({ length: 10 });
+  const password = "PPaa@12345";
+
+  const { data } = await instance.post("/auth/signup", { email, password });
+
+  return { email: data.email, password };
 };

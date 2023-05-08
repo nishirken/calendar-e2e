@@ -7,6 +7,7 @@ import chance from "chance";
 import { test } from "@playwright/test";
 import { url } from "./const";
 import { signup } from "./api";
+import { Input } from "./elements/input";
 
 test.describe("Sign up", () => {
   test.beforeEach(async ({ page }) => {
@@ -14,13 +15,12 @@ test.describe("Sign up", () => {
     await page.waitForSelector(signupFormTestIdSelectors.root);
   });
 
-  test("Creates new account and log in", async ({ page }) => {
-    const emailInput = await page
-      .locator(signupFormTestIdSelectors.emailInput)
-      .locator("input");
-    const passwordInput = await page
-      .locator(signupFormTestIdSelectors.passwordInput)
-      .locator("input");
+  test("Creates new account and logs in", async ({ page }) => {
+    const emailInput = new Input(signupFormTestIdSelectors.emailInput, page);
+    const passwordInput = new Input(
+      signupFormTestIdSelectors.passwordInput,
+      page
+    );
     const email = new chance().email({ length: 10 });
     const password = "PPaa@12345";
 
@@ -41,12 +41,11 @@ test.describe("Sign up", () => {
   });
 
   test("Shows error if email invalid", async ({ page }) => {
-    const emailInput = await page
-      .locator(signupFormTestIdSelectors.emailInput)
-      .locator("input");
-    const passwordInput = await page
-      .locator(signupFormTestIdSelectors.passwordInput)
-      .locator("input");
+    const emailInput = new Input(signupFormTestIdSelectors.emailInput, page);
+    const passwordInput = new Input(
+      signupFormTestIdSelectors.passwordInput,
+      page
+    );
 
     await emailInput.fill("mm");
     await passwordInput.fill("2");
@@ -57,9 +56,7 @@ test.describe("Sign up", () => {
   });
 
   test("Shows error if password is empty", async ({ page }) => {
-    const emailInput = await page
-      .locator(signupFormTestIdSelectors.emailInput)
-      .locator("input");
+    const emailInput = new Input(signupFormTestIdSelectors.emailInput, page);
 
     await emailInput.fill(new chance().email({ length: 10 }));
 
@@ -77,21 +74,17 @@ test.describe("Sign in", () => {
   });
 
   test("Signs in", async ({ page }) => {
-    const email = new chance().email({ length: 10 });
-    const password = "PPaa@12345";
+    const { email, password } = await signup();
 
-    await signup(email, password);
+    const emailInput = new Input(signinFormTestIdSelectors.emailInput, page);
 
-    const emailInput = page
-      .locator(signinFormTestIdSelectors.emailInput)
-      .locator("input");
+    const passwordInput = new Input(
+      signinFormTestIdSelectors.passwordInput,
+      page
+    );
 
-    const passwordInput = page
-      .locator(signinFormTestIdSelectors.passwordInput)
-      .locator("input");
-    
-    await emailInput.type(email);
-    await passwordInput.type(password);
+    await emailInput.fill(email);
+    await passwordInput.fill(password);
     await page.locator(signinFormTestIdSelectors.submitButton).click();
 
     const weekEl = await page.locator(weekTestIdSelectors.root).elementHandle();
